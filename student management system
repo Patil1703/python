@@ -1,0 +1,299 @@
+#IMPORTS
+import os
+import pickle
+
+m1 = open('stu details.bin','wb')
+
+m1.close()
+
+
+# MENU
+def menu():
+    print('')
+    print('--------------------------------------')
+    print('')
+    print(' INDEX')
+    print(' 1 - Add a new student ')
+    print(' 2 - View the student information ')
+    print(' 3 - Search for a student ')
+    print(' 4 - Edit a student’s details ')
+    print(' 5 - Delete a student’s details ')
+    print(' 6 - Quit ')
+    option = int(input("select an option from the menu displayed above = "))
+    return option
+
+# 1 - TO ADD A NEW STUDENT
+def add():
+    f = open('stu details.bin','ab+')
+    list=[]
+    while True:
+        
+        a1 = int(input('admission number = '))
+        a2 = input('name of student = ')
+        i2 = '   '+a2+'  '
+        a3 = input('class-section = ')
+        i3 = '   '+a3+'  '
+        a4 = input('attendance% = ')
+        i4 = '   '+a4+'   '
+        a5 = input('fee due/no due = ')
+        i5 = '  '+a5+' '
+        a6 = input('DOB [dd-mm-yy] = ')
+        i6 =' '+a6+' '
+        a7 = int(input('age = '))
+        a8 = input('guardian name = ')
+        i8 = '   '+a8+'   '
+        a9 = int(input('phone number = '))
+        list=[a1,a2,a3,a4,a5,a6,a7,a8,a9]
+        pickle.dump(list,f)
+        break
+        f.close()
+
+        
+
+# 2 - TO VIEW THE FILES
+def view():
+    f = open('stu details.bin','rb')
+    try:
+        while True:
+            l = pickle.load(f)
+            print(l)
+    except EOFError:
+        f.close()
+           
+        
+#3- SEARCHING FOR A STUDENT RECORD
+def search():
+    f = open('stu details.bin','rb')
+    n = int(input('enter admission number = '))
+    found=False
+    try:
+        while True:
+            m = pickle.load(f)
+            if m[0] == n:
+                print(m)
+                found=True
+                    
+    except EOFError:
+        f.close()
+            
+    if found==False:
+        print('no such records found in the file')
+    else:
+        print('search successfully')
+    
+# 4 - EDIT THE RECORDS OF A STUDENT
+
+def update():
+    f = open('stu details.bin','rb+')
+    pc=int(input("enter admission no. to search for particular record:"))
+    found=False
+    f.seek(0)
+    try:
+        while True:
+            pos = f.tell()
+            s= pickle.load(f)
+            if s[0]==pc:
+                s[1]=input("Enter student Name to update:")
+                s[2]=input("Enter guardian name to update:")
+                s[3]=input('enter class-section to update:')
+                f.seek(pos)
+                pickle.dump(s,f)
+                found=True
+               
+    except EOFError:
+        f.close()
+    if found==False:
+        print('no such records found in the file')
+    else:
+        print('update successfully')
+
+     
+    
+        
+# 5 - REMOVE A STUDENT'S RECORDS
+ 
+def remove():
+    f = open('stu details.bin','rb')
+    pc = int(input("enter admission no. to search for particular record:"))
+    found=False
+    try:
+        while True:
+            s=pickle.load(f)
+            if s[0]==pc:
+                 found=True
+    except EOFError:
+        f.close()
+    if found==False:
+        print('no such records found in the file')
+    else:
+        print('record deleted')
+                 
+
+# 6 - QUIT
+def Quit():
+    os.remove('stu details.bin')
+   
+    print('1 - give a review')
+    print('2 - proceed without giving review')
+    ent = int(input('enter your choice = '))
+    if ent == 1:
+        h = open('reviews.bin','ab')
+        n = input('enter your name = ')
+        print('your review')
+        rw = input('')
+        li = [n,rw]
+        pickle.dump(li,h)
+        print('thank you for using student management system.')
+    elif ent == 2:
+        print('thank you for using student management system.')
+
+# PASSWORD
+def password():
+    print('you have 3 tries to get your password right')
+    for i in range (0,3):
+        ps = input('enter your password = ')
+        file = open('password.bin','rb')
+        try:
+            while True:
+                l = pickle.load(file)
+                if ps == l[0]:
+                    print('CORRECT PASSWORD')
+                    p = True
+                    break
+                else:
+                    print('WRONG PASSWORD')
+                    p = False
+        except EOFError:
+            
+            break
+        file.close()
+        
+        return p
+
+#admin
+def admin():
+    print('you have 3 tries to get your password right')
+    for i in range (0,3):
+        ps = input('enter your password = ')
+        file = open('password.bin','rb')
+        try:
+            while True:
+                l = pickle.load(file)
+                if ps == l[1]:
+                    print('CORRECT PASSWORD')
+                    p = True
+                    break
+                else:
+                    print('WRONG PASSWORD')
+                    p = False
+        except EOFError:
+            
+            break
+        file.close()
+        
+        return p
+
+# THE ACTUAL POGRAM STARTS HERE
+print('--------------------------------------')
+print(' Welcome to Student Management System')
+print('---------------------------------------')
+q = password()
+while q == True:
+    t = menu()
+    if t == 1:
+        add()
+        print('1 student added successfully')
+    elif t == 2:
+        view()
+        print('student records')
+    elif t == 3:
+        ret = search()
+       
+    elif t == 4:
+        j = update() 
+        
+    elif t == 5:
+        g = remove()
+        
+    elif t == 6:
+        Quit()
+        
+        
+# review - only admin can access
+print('')
+print('--------------------------------------')
+print('key for following questions')
+print('1 - yes')
+print('2 - no')
+print('--------------------------------------')
+print('')
+ent = int(input('are you an admin?'))
+if ent == 1:
+    print('PROVE IT!!!!')
+    d = admin()
+    if d == True:
+        s = int(input('would you like to see the reviews?'))
+        if s == 1:
+            f = open('reviews.bin','rb')
+            try:
+                while True:
+                    l = pickle.load(f)
+                    print(l)
+            except EOFError:
+                f.close()
+                
+            f.close()
+        else:
+            print('')
+    else:
+        print('access denied!')
+
+print('--------------------------------------')
+print('')
+print('thank you for using student management. sorry for any inconvenience')
+
+print('--------------------------------------')
+print('--------------------------------------')
+
+
+#PASSWORD PROGRAM
+
+import pickle
+
+n = 0
+
+# USER PASSWORD
+print(' THIS IS FOR USER TO ACCESS STUDENT MANAGEMENT ')
+
+while n == 0:
+    pwd1 = input('enter your password = ')
+    pwd2 = input('confirm your password = ')
+    if pwd1 == pwd2:
+        n = 1
+    elif pwd1 != pwd2:
+        print('type the same password both the times!')
+
+print('Remember the password to enter into student management')
+
+print('')
+print('--------------------------------------')
+print('')
+# ADMIN PASSWORD
+n = 0
+print(' THIS IS FOR ADMIN TO ACCESS STUDENT MANAGEMENT ')
+while n == 0:
+    pwd3 = input('enter your password = ')
+    pwd4 = input('confirm your password = ')
+    if pwd3 == pwd4:
+        n = 1
+    elif pwd3 != pwd4:
+        print('type the same password both the times!')
+        
+print('Remember the password to enter into student management')
+
+# ACTUAL STORING OF PASSWORD
+op = open('password.bin','wb')
+l = [pwd1,pwd4]
+pickle.dump(l,op)
+print(l[0])
+print('the passwords are set, to reset the password please run the program again')
